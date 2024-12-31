@@ -3,6 +3,7 @@ import UserModel from "../models/user.modals";
 import bcrypt from "bcryptjs"
 import { connectDB } from "../lib/db";
 import jwt from "jsonwebtoken";
+import cloudinary from "../lib/cloudinary";
 
 
 export const signUp: RequestHandler = async (req: Request, res: Response) => {
@@ -89,4 +90,33 @@ export const signIn : RequestHandler = async (req : Request, res : Response) => 
 
 export const signOut = (req : Request, res : Response) => {
     res.send('Signout route');
+};
+
+export const updateProfile : RequestHandler = async (req : Request, res : Response) => {
+    await connectDB();
+    try{
+        const { profilePic } = req.body;
+        const userId = req.user.id;
+        if(!profilePic){
+            res.status(400).json({message : "Profile not found"});
+            return;
+        }
+        const uploadResponse = await cloudinary.uploader.upload(profilePic);
+        const updateUser = await UserModel.findByIdAndUpdate(userId, {
+            profilepic : uploadResponse.secure_url
+        }, {new : true});
+        res.status(200).json({message: "UserUpdatedSuccessfully" , data : updateUser})
+    }catch(error){
+        console.log("Error in updating profile:", error);
+        res.status(500).json({message: "Internal Server Error"});
+    }
+}
+
+export const checkAuth = (req : Request, res : Response) => {
+    try {
+        res.status(200).json(req.user);
+    } catch (error : any) {
+        console.log("Error in checkAuth controller", error.message);
+        res.status(500).json({message: "Internal Server Error"});
+    }
 };

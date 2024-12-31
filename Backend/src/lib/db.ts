@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 export const connectDB = async () =>{
-    
     try {
         const databaseUrl = process.env.DATABASE_URI;
         if(!databaseUrl){

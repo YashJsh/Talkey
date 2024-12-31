@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signOut = exports.signIn = exports.signUp = void 0;
+exports.checkAuth = exports.updateProfile = exports.signOut = exports.signIn = exports.signUp = void 0;
 const user_modals_1 = __importDefault(require("../models/user.modals"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const db_1 = require("../lib/db");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const cloudinary_1 = __importDefault(require("../lib/cloudinary"));
 const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, db_1.connectDB)();
     const { name, email, password } = req.body;
@@ -62,6 +63,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.signUp = signUp;
 const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, db_1.connectDB)();
     const { email, password } = req.body;
     if (!email || !password) {
         res.status(400).json({ message: "Email and Password are required" });
@@ -72,29 +74,65 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).json({ message: "JWT Secret is not defined" });
         return;
     }
-    const user = yield user_modals_1.default.findOne({
-        email: email
-    });
-    if (!user) {
-        res.status(400).json({ message: "User not found" });
+    try {
+        const user = yield user_modals_1.default.findOne({
+            email: email
+        });
+        if (!user) {
+            res.status(400).json({ message: "Invalid Credentials" });
+            return;
+        }
+        const isPasswordValid = yield bcryptjs_1.default.compare(password, user.password);
+        if (!isPasswordValid) {
+            res.status(400).json({ message: "Invalid Credentials" });
+            return;
+        }
+        const userId = user._id;
+        const token = jsonwebtoken_1.default.sign({ userId }, jwtSecret, { expiresIn: "2h" });
+        res.status(201).json({
+            success: true,
+            message: "User created successfully",
+            token: token
+        });
         return;
     }
-    const isPasswordValid = yield bcryptjs_1.default.compare(password, user.password);
-    if (!isPasswordValid) {
-        res.status(400).json({ message: "Invalid Password" });
-        return;
+    catch (error) {
+        res.status(500).json({ message: "Internal Server Error" });
     }
-    const userId = user._id;
-    const token = jsonwebtoken_1.default.sign({ userId }, jwtSecret, { expiresIn: "2h" });
-    res.status(201).json({
-        success: true,
-        message: "User created successfully",
-        token: token
-    });
-    return;
 });
 exports.signIn = signIn;
 const signOut = (req, res) => {
     res.send('Signout route');
 };
 exports.signOut = signOut;
+const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, db_1.connectDB)();
+    try {
+        const { profilePic } = req.body;
+        const userId = req.user.id;
+        if (!profilePic) {
+            res.status(400).json({ message: "Profile not found" });
+            return;
+        }
+        const uploadResponse = yield cloudinary_1.default.uploader.upload(profilePic);
+        const updateUser = yield user_modals_1.default.findByIdAndUpdate(userId, {
+            profilepic: uploadResponse.secure_url
+        }, { new: true });
+        res.status(200).json({ message: "UserUpdatedSuccessfully", data: updateUser });
+    }
+    catch (error) {
+        console.log("Error in updating profile:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+exports.updateProfile = updateProfile;
+const checkAuth = (req, res) => {
+    try {
+        res.status(200).json(req.user);
+    }
+    catch (error) {
+        console.log("Error in checkAuth controller", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+exports.checkAuth = checkAuth;

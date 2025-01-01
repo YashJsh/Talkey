@@ -1,29 +1,22 @@
-import { useRecoilValueLoadable, useSetRecoilState } from "recoil"
-import { authState, checkAuthState } from "../store/userAuthStore";
 import { useEffect } from "react";
+import { useRecoilValue, useRecoilValueLoadable} from "recoil";
+import { authState, checkAuthState } from "../store/userAuthStore";
+import {Loader} from "lucide-react"
 
 const Navbar = () => {
-  const checkAuth = useRecoilValueLoadable(checkAuthState); // Trigger the selector computation
-  const setAuthStates = useSetRecoilState(authState);
+  const { authUser, isCheckingAuth } = useRecoilValue(authState);
+  const checkAuth = useRecoilValueLoadable(checkAuthState);
 
-  useEffect(() => {
-    if (checkAuth.state === "hasValue") {
-      setAuthStates(checkAuth.contents as any);
-    }
-    if (checkAuth.state === "hasError"){
-      setAuthStates((prevState) => ({
-        ...prevState,
-        isCheckingAuth : false,
-      }))
-    }
-  }, [checkAuth, setAuthStates]);
+  useEffect(()=> {
+    checkAuth;
+  }, [checkAuth]);
 
-  return (
-    <div>
-        Navbar
-    </div>
+  if (!isCheckingAuth && !authUser) {
+    return <div className="flex items-center justify-center h-screen">
+      <Loader className="size-10 animate-spin"/>
+    </div>;
+  }
+  return <div>Navbar</div>;
+};
 
-  )
-}
-
-export default Navbar
+export default Navbar;

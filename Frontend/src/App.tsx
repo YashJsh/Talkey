@@ -6,11 +6,12 @@ import SignUpPage from "./pages/SignUpPage";
 import SignInPage from "./pages/SignInPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
+import {Toaster } from "react-hot-toast"
 
 function App() {
   return (
     <>
-      <Navbar/>
+      <Toaster/>
       <Routes>
         <Route path = "/" element = {<HomePage/>}/>
         <Route path = "/signup" element = {<SignUpPage/>}/>

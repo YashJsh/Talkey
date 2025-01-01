@@ -58,5 +58,5 @@ export const checkAuthState = selector({
                 isCheckingAuth: false
             }
         }
-    }
+    } 
 })

@@ -79,3 +79,16 @@ export const logout = selector({
           }
     }
 })
+
+export const updateProfile = selector({
+    key : 'updateProfile',
+    get : ()=>{},
+    set : async ({set, get}, updateData : any) =>{
+        const currentState = get(authState);
+        if (!currentState.authUser) {
+            console.error("No authenticated user found.");
+            return;
+        }
+      
+    }
+})

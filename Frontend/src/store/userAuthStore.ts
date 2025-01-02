@@ -1,5 +1,6 @@
 import { atom, selector } from "recoil";
 import { axiosInstance } from "../axios/axios";
+import toast from "react-hot-toast";
 
 interface User{
     _id : string
@@ -59,4 +60,22 @@ export const checkAuthState = selector({
             }
         }
     } 
+})
+
+
+export const logout = selector({
+    key : 'logout',
+    get : async ({get}) => {
+        const state = get(authState);
+        try {
+            await axiosInstance.post("/auth/logout");
+            toast.success("Logged out successfully");
+            return { 
+                ...state,
+                authUser : null
+            }
+          } catch (error : any) {
+            toast.error(error.response.data.message);
+          }
+    }
 })

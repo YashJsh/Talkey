@@ -10,12 +10,13 @@ import {
   MessageSquare,
   User,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthPattern from "../components/AuthPattern";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {toast, Toaster} from "sonner";
+import { axiosInstance } from "../axios/axios";
+import toast from "react-hot-toast";
 
 const SignUpSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
@@ -24,6 +25,7 @@ const SignUpSchema = z.object({
 });
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [auth, setAuth] = useRecoilState(authState);
 
@@ -35,9 +37,19 @@ const SignUpPage = () => {
     resolver: zodResolver(SignUpSchema),
   });
 
-
-  const onSubmit = (data: z.infer<typeof SignUpSchema>) => {
-    console.log(data);
+  const onSubmit = async (data: z.infer<typeof SignUpSchema>) => {
+    setAuth((prevAuth) => ({ ...prevAuth, isSigningUp: true }));
+    try {
+      const response = await axiosInstance.post("/auth/signup", data);
+      if(response.status === 201){
+        toast.success("Account Created Successfully");
+        navigate("/");
+      }
+    } catch (error : any) {
+      toast.error(error.response.data.message);
+    }finally{
+      setAuth((prevAuth) => ({ ...prevAuth, isSigningUp: false }));
+    }
   };
 
   return (
@@ -57,7 +69,7 @@ const SignUpPage = () => {
               </p>
             </div>
           </div>
-
+    
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="form-control">
               <label className="label">

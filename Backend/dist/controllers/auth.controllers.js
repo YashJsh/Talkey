@@ -18,12 +18,15 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const db_1 = require("../lib/db");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const cloudinary_1 = __importDefault(require("../lib/cloudinary"));
+const tokenGenerate_1 = require("../lib/tokenGenerate");
 const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, db_1.connectDB)();
-    const { name, email, password } = req.body;
+    const { fullName, email, password } = req.body;
     try {
         if (password.length < 6) {
-            res.status(400).json({ message: "Password must be at least 6 characters long" });
+            res
+                .status(400)
+                .json({ message: "Password must be at least 6 characters long" });
             return;
         }
         const user = yield user_modals_1.default.findOne({ email });
@@ -33,15 +36,17 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const hashPassword = yield bcryptjs_1.default.hash(password, 10);
         const newUser = yield user_modals_1.default.create({
-            fullName: name,
+            fullName,
             email,
-            password: hashPassword
+            password: hashPassword,
         });
         if (!newUser) {
             res.status(400).json({ sucess: false, message: "Unable to create User" });
             return;
         }
         const userId = newUser._id;
+        (0, tokenGenerate_1.generateToken)(userId.toString(), res);
+        yield newUser.save();
         const jwtSecret = process.env.JWT_SECRET;
         if (!jwtSecret) {
             res.status(500).json({ message: "JWT Secret is not defined" });
@@ -51,12 +56,12 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(201).json({
             success: true,
             message: "User created successfully",
-            token: token
+            token: token,
         });
         return;
     }
     catch (error) {
-        console.log("Error in sign up of user", error.message);
+        console.log("Error in sign up of user : ", error.message);
         res.status(500).json({ message: "Internal Server Error" });
         return;
     }
@@ -76,7 +81,7 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     try {
         const user = yield user_modals_1.default.findOne({
-            email: email
+            email: email,
         });
         if (!user) {
             res.status(400).json({ message: "Invalid Credentials" });
@@ -88,11 +93,12 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return;
         }
         const userId = user._id;
+        (0, tokenGenerate_1.generateToken)(userId.toString(), res);
         const token = jsonwebtoken_1.default.sign({ userId }, jwtSecret, { expiresIn: "2h" });
         res.status(201).json({
             success: true,
             message: "User created successfully",
-            token: token
+            token: token,
         });
         return;
     }
@@ -102,7 +108,7 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.signIn = signIn;
 const signOut = (req, res) => {
-    res.send('Signout route');
+    res.send("Signout route");
 };
 exports.signOut = signOut;
 const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -116,9 +122,11 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         }
         const uploadResponse = yield cloudinary_1.default.uploader.upload(profilePic);
         const updateUser = yield user_modals_1.default.findByIdAndUpdate(userId, {
-            profilepic: uploadResponse.secure_url
+            profilepic: uploadResponse.secure_url,
         }, { new: true });
-        res.status(200).json({ message: "UserUpdatedSuccessfully", data: updateUser });
+        res
+            .status(200)
+            .json({ message: "UserUpdatedSuccessfully", data: updateUser });
     }
     catch (error) {
         console.log("Error in updating profile:", error);

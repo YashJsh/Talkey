@@ -41,7 +41,6 @@ export const signUp: RequestHandler = async (req: Request, res: Response) => {
       success: true,
       message: "User created successfully",
     });
-
     return;
   } catch (error: any) {
     console.log("Error in sign up of user : ", error.message);
@@ -75,7 +74,7 @@ export const signIn: RequestHandler = async (req: Request, res: Response) => {
     generateToken(userId.toString(), res);
     res.status(201).json({
       success: true,
-      message: "User created successfully",
+      message: "User logged in successfully",
     });
     return;
   } catch (error) {
@@ -123,7 +122,9 @@ export const updateProfile: RequestHandler = async (
 };
 
 export const checkAuth = (req: Request, res: Response) => {
+  console.log("Entry")
   try {
+    console.log(req.user);
     res.status(200).json(req.user);
   } catch (error: any) {
     console.log("Error in checkAuth controller", error.message);

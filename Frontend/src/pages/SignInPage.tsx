@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { authState } from "../store/userAuthStore";
-import { useRecoilState } from "recoil";
+import { authStore } from "../store/userAuthStore";
 import {
   Eye,
   EyeOff,
@@ -9,45 +8,31 @@ import {
   Mail,
   MessageSquare,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AuthPattern from "../components/AuthPattern";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { axiosInstance } from "../axios/axios";
-import toast from "react-hot-toast";
 
-const SignUpSchema = z.object({
+export const SignInSchema = z.object({
   email: z.string().email("Enter a valid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 const SignInPage = () => {
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [auth, setAuth] = useRecoilState(authState);
+  const {isLoggingIn , signin} = authStore();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<z.infer<typeof SignUpSchema>>({
-    resolver: zodResolver(SignUpSchema),
+  } = useForm<z.infer<typeof SignInSchema>>({
+    resolver: zodResolver(SignInSchema),
   });
 
-  const onSubmit = async (data: z.infer<typeof SignUpSchema>) => {
-    setAuth((prevAuth) => ({ ...prevAuth, isSigningUp: true }));
-    try {
-      const response = await axiosInstance.post("/auth/signin", data);
-      if(response.status === 201){
-        toast.success("Account Created Successfully");
-        navigate("/");
-      }
-    } catch (error : any) {
-      toast.error(error.response.data.message);
-    }finally{
-      setAuth((prevAuth) => ({ ...prevAuth, isSigningUp: false }));
-    }
+  const onSubmit = async (data: z.infer<typeof SignInSchema>) => {
+    signin(data)
   };
 
   return (
@@ -120,9 +105,9 @@ const SignInPage = () => {
             <button
               type="submit"
               className="btn btn-primary w-full"
-              disabled={auth.isSigningUp}
+              disabled={isLoggingIn}
             >
-              {auth.isSigningUp ? (
+              {isLoggingIn ? (
                 <>
                   <Loader className="animate-spin" /> Loading...
                 </>

@@ -19,12 +19,11 @@ const db_1 = require("../lib/db");
 const protectedRoute = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, db_1.connectDB)();
     try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith('Bearer')) {
+        const token = req.cookies.jwt;
+        if (!token) {
             res.status(403).json({ message: "Unauthorized User" });
             return;
         }
-        const token = authHeader.split(' ')[1];
         const JWT_SECRET = process.env.JWT_SECRET;
         if (JWT_SECRET === undefined) {
             res.status(500).json({ message: "JWT Secret is not defined" });

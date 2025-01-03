@@ -16,7 +16,6 @@ exports.checkAuth = exports.updateProfile = exports.signOut = exports.signIn = e
 const user_modals_1 = __importDefault(require("../models/user.modals"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const db_1 = require("../lib/db");
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const cloudinary_1 = __importDefault(require("../lib/cloudinary"));
 const tokenGenerate_1 = require("../lib/tokenGenerate");
 const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -47,16 +46,9 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const userId = newUser._id;
         (0, tokenGenerate_1.generateToken)(userId.toString(), res);
         yield newUser.save();
-        const jwtSecret = process.env.JWT_SECRET;
-        if (!jwtSecret) {
-            res.status(500).json({ message: "JWT Secret is not defined" });
-            return;
-        }
-        const token = jsonwebtoken_1.default.sign({ userId }, jwtSecret, { expiresIn: "2h" });
         res.status(201).json({
             success: true,
             message: "User created successfully",
-            token: token,
         });
         return;
     }
@@ -74,11 +66,6 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(400).json({ message: "Email and Password are required" });
         return;
     }
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-        res.status(500).json({ message: "JWT Secret is not defined" });
-        return;
-    }
     try {
         const user = yield user_modals_1.default.findOne({
             email: email,
@@ -94,11 +81,9 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const userId = user._id;
         (0, tokenGenerate_1.generateToken)(userId.toString(), res);
-        const token = jsonwebtoken_1.default.sign({ userId }, jwtSecret, { expiresIn: "2h" });
         res.status(201).json({
             success: true,
-            message: "User created successfully",
-            token: token,
+            message: "User logged in successfully",
         });
         return;
     }
@@ -108,7 +93,14 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.signIn = signIn;
 const signOut = (req, res) => {
-    res.send("Signout route");
+    try {
+        res.cookie("jwt", "", { maxAge: 0 });
+        res.status(200).json({ message: "Logged out successfully" });
+    }
+    catch (error) {
+        console.log("Error in logout controller", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
 };
 exports.signOut = signOut;
 const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -135,7 +127,9 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.updateProfile = updateProfile;
 const checkAuth = (req, res) => {
+    console.log("Entry");
     try {
+        console.log(req.user);
         res.status(200).json(req.user);
     }
     catch (error) {

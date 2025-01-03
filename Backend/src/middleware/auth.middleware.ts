@@ -10,12 +10,11 @@ interface JwtPayload {
 export const protectedRoute : RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     await connectDB();
     try{
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith('Bearer')) {
+        const token = req.cookies.jwt;
+        if (!token) {
             res.status(403).json({message : "Unauthorized User"})
             return;
         }
-        const token = authHeader.split(' ')[1];
         const JWT_SECRET = process.env.JWT_SECRET;
         if(JWT_SECRET === undefined){
             res.status(500).json({message: "JWT Secret is not defined"})

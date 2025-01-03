@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { authState } from "../store/userAuthStore";
-import { useRecoilState } from "recoil";
+import { authStore } from "../store/userAuthStore";
 import {
   Eye,
   EyeOff,
@@ -10,24 +9,21 @@ import {
   MessageSquare,
   User,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AuthPattern from "../components/AuthPattern";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { axiosInstance } from "../axios/axios";
-import toast from "react-hot-toast";
 
-const SignUpSchema = z.object({
+export const SignUpSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
   email: z.string().email("Enter a valid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 const SignUpPage = () => {
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [auth, setAuth] = useRecoilState(authState);
+  const { isSigningUp, signup } = authStore();
 
   const {
     register,
@@ -38,19 +34,9 @@ const SignUpPage = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof SignUpSchema>) => {
-    setAuth((prevAuth) => ({ ...prevAuth, isSigningUp: true }));
-    try {
-      const response = await axiosInstance.post("/auth/signup", data);
-      if(response.status === 201){
-        toast.success("Account Created Successfully");
-        navigate("/");
-      }
-    } catch (error : any) {
-      toast.error(error.response.data.message);
-    }finally{
-      setAuth((prevAuth) => ({ ...prevAuth, isSigningUp: false }));
-    }
+    signup(data); 
   };
+
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
@@ -141,9 +127,9 @@ const SignUpPage = () => {
             <button
               type="submit"
               className="btn btn-primary w-full "
-              disabled={auth.isSigningUp}
+              disabled={isSigningUp}
             >
-              {auth.isSigningUp ? (
+              {isSigningUp ? (
                 <>
                   <Loader className="animate-spin" /> Loading...
                 </>

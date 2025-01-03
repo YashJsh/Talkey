@@ -1,29 +1,30 @@
-import { useRecoilState, useRecoilValue } from "recoil";
-import { authState, updateProfile } from "../store/userAuthStore";
+import { authStore } from "../store/userAuthStore";
 import Navbar from "../components/Navbar";
 import { Camera, User } from "lucide-react";
+import { useState } from "react";
 
 interface FileInputEvent extends React.ChangeEvent<HTMLInputElement> {
     target: HTMLInputElement & { files: FileList };
   }
 
-const ProfilePage = () => {
-  const [auth, setAuth] = useRecoilState(authState);
-  const update = useRecoilValue(updateProfile);
 
+const ProfilePage = () => {
   
+  const { authUser, isUpdatingProfile, updateProfile } = authStore();
+  const [selectedImage, setSelectedImage ] = useState<string  | null>(null);    
   const handleImageUpload = async (e: FileInputEvent) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.readAsDataURL(file);
-
     reader.onload = async () => {
       const base64image = reader.result as string;
-      await update({ profilePic: base64image });
+      setSelectedImage(base64image);
+      await updateProfile({ profilePic: base64image });
     };
   };
+
   return (
     <>
       <Navbar />
@@ -38,7 +39,7 @@ const ProfilePage = () => {
             <div className="flex flex-col items-center gap-4">
               <div className="relative">
                 <img
-                  src={auth.authUser?.profilepic || "/avatar.png"}
+                  src={selectedImage || authUser?.profilePic || "/avatar.png"}
                   alt="profile"
                   className="size-32 rounded-full object-cover border-4"
                 />
@@ -47,7 +48,7 @@ const ProfilePage = () => {
                   className={`absolute bottom-0 right-0
                     bg-base-content hover:scale-105 
                     p-2 rounded-full cursor-pointer transition-all duration-200 ${
-                      auth.isUpdatingProfile
+                      isUpdatingProfile
                         ? "animate-pulse pointer-events-none"
                         : ""
                     } `}
@@ -60,12 +61,12 @@ const ProfilePage = () => {
                     className="hidden"
                     accept="image/*"
                     onChange={handleImageUpload}
-                    disabled={auth.isUpdatingProfile}
+                    disabled={isUpdatingProfile}
                   />
                 </label>
               </div>
               <p className="text-sm text-base-content/50 ">
-                {auth.isUpdatingProfile
+                {isUpdatingProfile
                   ? "Uploading..."
                   : "Click on the camera icon to upload your photo"}
               </p>
@@ -78,7 +79,7 @@ const ProfilePage = () => {
                     <User/>
                     Full Name
                   </div>
-                  <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{auth.authUser?.fullName}</p>
+                  <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.fullName}</p>
                 </div>
 
                 <div className="space-y-1.5">
@@ -86,7 +87,7 @@ const ProfilePage = () => {
                     <User/>
                     Email Address
                   </div>
-                  <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{auth.authUser?.email}</p>
+                  <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.email}</p>
                 </div>
             </div>
 

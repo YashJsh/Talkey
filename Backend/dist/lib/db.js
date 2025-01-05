@@ -20,8 +20,7 @@ const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
         if (!databaseUrl) {
             throw new Error("DATABASE_URI is not defined");
         }
-        const conn = yield mongoose_1.default.connect(databaseUrl);
-        console.log(`MongoDB connected: ${conn.connection.host}`);
+        yield mongoose_1.default.connect(databaseUrl);
     }
     catch (error) {
         console.log("MongoDB connection error:", error);

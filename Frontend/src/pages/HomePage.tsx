@@ -11,7 +11,7 @@ const HomePage = () => {
   return (
     <>
       <Navbar/>
-      <div className=" bg-base-200 mx-auto">
+      <div className=" bg-base-200 ">
           <div className="flex items-center justify-center">
               <div className="container w-full ">
                 <div className="flex rounded-lg overflow-hidden">

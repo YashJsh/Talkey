@@ -10,19 +10,19 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
+const socket_1 = require("./lib/socket");
 dotenv_1.default.config();
-const app = (0, express_1.default)();
-app.use(body_parser_1.default.json({ limit: '50mb' }));
-app.use(body_parser_1.default.urlencoded({ limit: '50mb', extended: true }));
-app.use((0, cookie_parser_1.default)());
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: true }));
-app.use((0, cors_1.default)({
+socket_1.app.use(body_parser_1.default.json({ limit: '50mb' }));
+socket_1.app.use(body_parser_1.default.urlencoded({ limit: '50mb', extended: true }));
+socket_1.app.use((0, cookie_parser_1.default)());
+socket_1.app.use(express_1.default.json());
+socket_1.app.use(express_1.default.urlencoded({ extended: true }));
+socket_1.app.use((0, cors_1.default)({
     origin: "http://localhost:5173",
     credentials: true
 }));
-app.use("/api/auth", auth_route_1.default);
-app.use("/api/messages", messages_route_1.default);
-app.listen(3000, () => {
+socket_1.app.use("/api/auth", auth_route_1.default);
+socket_1.app.use("/api/messages", messages_route_1.default);
+socket_1.server.listen(3000, () => {
     console.log("Server is running on port 3000");
 });

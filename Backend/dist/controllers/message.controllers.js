@@ -17,6 +17,7 @@ const db_1 = require("../lib/db");
 const user_modals_1 = __importDefault(require("../models/user.modals"));
 const message_model_1 = __importDefault(require("../models/message.model"));
 const cloudinary_1 = __importDefault(require("../lib/cloudinary"));
+const socket_1 = require("../lib/socket");
 const getUsersForSidebar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, db_1.connectDB)();
     try {
@@ -41,7 +42,7 @@ const getMessages = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const messages = yield message_model_1.default.find({
             $or: [
                 { senderId: myId, receiverId: userToChatId },
-                { senderId: userToChatId, recieverId: myId },
+                { senderId: userToChatId, receiverId: myId },
             ],
         });
         res
@@ -72,7 +73,10 @@ const sendMessages = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             image: imageUrl
         });
         yield newMessage.save();
-        // TODO :  Real time functionality
+        const receiverSocketId = (0, socket_1.getReceiverSocketId)(receiverId);
+        if (receiverSocketId) {
+            socket_1.io.to(receiverSocketId).emit("newMessage", newMessage);
+        }
         res.status(201).json({ message: "Message Received", data: newMessage });
     }
     catch (error) {

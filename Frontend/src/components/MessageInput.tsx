@@ -25,6 +25,7 @@ const MessageInput = () => {
         setImagePreview(null);
         if(fileInputRef.current) fileInputRef.current.value = "";
     }
+
     const handleSendMessage = async (e : any)=>{
          e.preventDefault();
          if(!text.trim() &&  !imagePreview ) return;
@@ -33,6 +34,7 @@ const MessageInput = () => {
                 text: text.trim(), 
                 image: imagePreview || undefined, 
             });
+            setText("");
          }catch(error){
             console.error("Failed to send messages :" , error);
          }

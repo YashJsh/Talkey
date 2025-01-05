@@ -3,6 +3,7 @@ import { connectDB } from "../lib/db";
 import UserModel from "../models/user.modals";
 import messageModel from "../models/message.model";
 import cloudinary from "../lib/cloudinary";
+import { getReceiverSocketId, io } from "../lib/socket";
 
 export const getUsersForSidebar: RequestHandler = async (
   req: Request,
@@ -33,7 +34,7 @@ export const getMessages: RequestHandler = async (
     const messages = await messageModel.find({
       $or: [
         { senderId: myId, receiverId: userToChatId },
-        { senderId: userToChatId, recieverId: myId },
+        { senderId: userToChatId, receiverId: myId },
       ],
     });
     res
@@ -67,7 +68,13 @@ export const sendMessages: RequestHandler = async (
     })
 
     await newMessage.save();
-    // TODO :  Real time functionality
+   
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if(receiverSocketId){
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+
+
     res.status(201).json({message : "Message Received", data : newMessage});
   } catch (error) {
     console.log("Error in Sending messages", error);

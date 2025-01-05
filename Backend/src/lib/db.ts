@@ -6,8 +6,7 @@ export const connectDB = async () =>{
         if(!databaseUrl){
             throw new Error("DATABASE_URI is not defined");
         }
-        const conn = await mongoose.connect(databaseUrl);
-        console.log(`MongoDB connected: ${conn.connection.host}`);
+        await mongoose.connect(databaseUrl);
     }catch(error){
         console.log("MongoDB connection error:", error);
     }

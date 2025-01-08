@@ -8,7 +8,7 @@ import MessageSkeleton from "./Skeleton/MessageSkeleton";
 const ChatBox = () => {
   const { messages, getMessage, isMessageLoading, selectedUser, subscribeToMessages, unsubscribeFromMessages } =
     useChatStore();
-  const { authUser } = authStore();
+  const { authUser, isCheckingAuth } = authStore();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -22,10 +22,9 @@ const ChatBox = () => {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-
+  console.log("Auth user is " , authUser);
   
-  
-  if (isMessageLoading) return (
+  if (isMessageLoading || isCheckingAuth) return (
     <div className="flex-1 flex flex-col overflow-auto h-screen">
       <ChatHeader />
       <MessageSkeleton />
@@ -34,7 +33,7 @@ const ChatBox = () => {
   );
 
   return (
-    <div className="w-full h-screen flex flex-1 flex-col  bg-base-300/50 pt-16">
+    <div className="w-full h-screen flex flex-1 flex-col  bg-base-200/30 pt-16">
       <ChatHeader />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -65,7 +64,7 @@ const ChatBox = () => {
                   : "Unknown time"}
               </time>
             </div>
-            <div className="chat-bubble h-auto flex flex-col">
+            <div className="chat-bubble h-auto flex flex-col  bg-base-300/80 text-base-content/90">
               {message.image && (
                 <img
                   src={message.image}

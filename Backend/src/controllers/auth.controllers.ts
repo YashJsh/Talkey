@@ -122,9 +122,7 @@ export const updateProfile: RequestHandler = async (
 };
 
 export const checkAuth = (req: Request, res: Response) => {
-  console.log("Entry")
   try {
-    console.log(req.user);
     res.status(200).json(req.user);
   } catch (error: any) {
     console.log("Error in checkAuth controller", error.message);

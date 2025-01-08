@@ -49,6 +49,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(201).json({
             success: true,
             message: "User created successfully",
+            user: req.user
         });
         return;
     }
@@ -84,6 +85,7 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(201).json({
             success: true,
             message: "User logged in successfully",
+            user: req.user
         });
         return;
     }
@@ -127,9 +129,7 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.updateProfile = updateProfile;
 const checkAuth = (req, res) => {
-    console.log("Entry");
     try {
-        console.log(req.user);
         res.status(200).json(req.user);
     }
     catch (error) {

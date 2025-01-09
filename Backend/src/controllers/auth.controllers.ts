@@ -37,10 +37,16 @@ export const signUp: RequestHandler = async (req: Request, res: Response) => {
     generateToken(userId.toString(), res);
     await newUser.save();
   
-    res.status(201).json({
-      success: true,
-      message: "User created successfully",
+    // res.status(201).json({
+    //   success: true,
+    //   message: "User created successfully",
       
+    // });
+    res.status(201).json({
+      _id: newUser._id,
+      fullName: newUser.fullName,
+      email: newUser.email,
+      profilePic: newUser.profilepic,
     });
     return;
   } catch (error: any) {
@@ -73,9 +79,15 @@ export const signIn: RequestHandler = async (req: Request, res: Response) => {
     }
     const userId = user._id;
     generateToken(userId.toString(), res);
-    res.status(201).json({
-      success: true,
-      message: "User logged in successfully",
+    // res.status(201).json({
+    //   success: true,
+    //   message: "User logged in successfully",
+    // });
+    res.status(200).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profilePic: user.profilepic,
     });
     return;
   } catch (error) {

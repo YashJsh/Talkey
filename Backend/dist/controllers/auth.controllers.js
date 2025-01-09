@@ -46,9 +46,15 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const userId = newUser._id;
         (0, tokenGenerate_1.generateToken)(userId.toString(), res);
         yield newUser.save();
+        // res.status(201).json({
+        //   success: true,
+        //   message: "User created successfully",
+        // });
         res.status(201).json({
-            success: true,
-            message: "User created successfully",
+            _id: newUser._id,
+            fullName: newUser.fullName,
+            email: newUser.email,
+            profilePic: newUser.profilepic,
         });
         return;
     }
@@ -81,9 +87,15 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const userId = user._id;
         (0, tokenGenerate_1.generateToken)(userId.toString(), res);
-        res.status(201).json({
-            success: true,
-            message: "User logged in successfully",
+        // res.status(201).json({
+        //   success: true,
+        //   message: "User logged in successfully",
+        // });
+        res.status(200).json({
+            _id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            profilePic: user.profilepic,
         });
         return;
     }

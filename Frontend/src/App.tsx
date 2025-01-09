@@ -16,7 +16,7 @@ function App() {
 
   useEffect(()=>{
     checkAuth();
-  }, [checkAuth, authUser])
+  }, [checkAuth])
 
   if (isCheckingAuth && authUser===null)
     return (

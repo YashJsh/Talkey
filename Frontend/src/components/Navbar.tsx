@@ -1,5 +1,5 @@
 import { authStore } from "../store/userAuthStore";
-import { LogOut, MessageSquare, Settings, User } from "lucide-react";
+import { LogOut, MessageSquare, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import Theme from "./Theme";
 

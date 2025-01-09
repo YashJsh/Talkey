@@ -40,8 +40,10 @@ export const authStore = create<Auth>((set, get) => ({
     socket : null,
 
     checkAuth : async() => {
+        console.log("checkAuth called");
         try {
             const res = await axiosInstance.get("/auth/check");
+            console.log("On logging in it runs")
             set({authUser : res.data as User});
             get().connectSocket();
         } catch (error) {
@@ -56,6 +58,7 @@ export const authStore = create<Auth>((set, get) => ({
         set({ isSigningUp: true });
         try {
           const res = await axiosInstance.post("/auth/signup", data);
+          console.log(res.data);
           set({ authUser: res.data as User });
           toast.success(" Account created successfully");
           get().connectSocket();
@@ -70,7 +73,7 @@ export const authStore = create<Auth>((set, get) => ({
         set({isLoggingIn : true });
         try {
           const res = await axiosInstance.post("/auth/signin", data);
-          console.log("response is ", res);
+          console.log(res.data);
           set({ authUser: res.data as User });
           toast.success("Logged in successfully");
           get().connectSocket();

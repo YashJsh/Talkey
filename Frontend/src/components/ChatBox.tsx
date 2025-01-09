@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import MessageInput from "./MessageInput";
 import { useChatStore } from "../store/userChatStore";
 import ChatHeader from "./ChatHeader";
@@ -22,7 +22,7 @@ const ChatBox = () => {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-  console.log("Auth user is " , authUser);
+
   
   if (isMessageLoading || isCheckingAuth) return (
     <div className="flex-1 flex flex-col overflow-auto h-screen">
@@ -31,6 +31,7 @@ const ChatBox = () => {
       <MessageInput />
     </div>
   );
+
 
   return (
     <div className="w-full h-screen flex flex-1 flex-col  bg-base-200/30 pt-16">
@@ -41,8 +42,8 @@ const ChatBox = () => {
           <div
             key={message.id || `message-${index}`}
             className={`chat ${message.senderId === authUser?._id ? "chat-end" : "chat-start"}`}
-          >
-            <div className="chat-image avatar">
+          > 
+            <div className="chat-image avatar"> 
               <div className="size-10 rounded-full border">
                 <img
                   src={

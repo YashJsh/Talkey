@@ -2,7 +2,6 @@ import { Request, Response, RequestHandler } from "express";
 import UserModel from "../models/user.modals";
 import bcrypt from "bcryptjs";
 import { connectDB } from "../lib/db";
-import jwt from "jsonwebtoken";
 import cloudinary from "../lib/cloudinary";
 import { generateToken } from "../lib/tokenGenerate";
 
@@ -33,6 +32,7 @@ export const signUp: RequestHandler = async (req: Request, res: Response) => {
       res.status(400).json({ sucess: false, message: "Unable to create User" });
       return;
     }
+
     const userId = newUser._id;
     generateToken(userId.toString(), res);
     await newUser.save();
@@ -40,6 +40,7 @@ export const signUp: RequestHandler = async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       message: "User created successfully",
+      
     });
     return;
   } catch (error: any) {

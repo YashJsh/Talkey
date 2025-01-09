@@ -1,8 +1,7 @@
-import { create, useStore } from "zustand";
+import { create } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../axios/axios";
 import { authStore, User } from "./userAuthStore";
-import { get } from "axios";
 
 interface Message {
     id: string;
@@ -13,6 +12,7 @@ interface Message {
     timestamp: string;
     createdAt?: Date;
     updatedAt?: Date;
+    selectedUserId?: string;
   }
   
   interface SendMessagePayload {
@@ -74,11 +74,12 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
 
   sendMessages: async (messageData: SendMessagePayload) => {
     const { selectedUser } = useChatStore.getState();
-
+    
     if (!selectedUser) {
       toast.error("No user selected.");
       return;
     }
+    
     try {
       const response = await axiosInstance.post(
         `/messages/send/${selectedUser._id}`,

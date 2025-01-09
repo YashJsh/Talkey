@@ -49,7 +49,6 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(201).json({
             success: true,
             message: "User created successfully",
-            user: req.user
         });
         return;
     }
@@ -85,7 +84,6 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(201).json({
             success: true,
             message: "User logged in successfully",
-            user: req.user
         });
         return;
     }

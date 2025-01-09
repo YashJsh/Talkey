@@ -28,7 +28,7 @@ io.on("connection", (socket: Socket) => {
   if (typeof userId === 'string') {
     userSocketMap[userId] = socket.id;
   }
-  console.log(userSocketMap);
+  
   // io.emit() is used to send events to all the connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 

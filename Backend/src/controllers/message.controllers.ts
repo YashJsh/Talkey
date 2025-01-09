@@ -54,7 +54,9 @@ export const sendMessages: RequestHandler = async (
   try {
     const { text, image } = req.body;
     const { id : receiverId} = req.params;
+    console.log(receiverId);
     const senderId = req.user._id;
+    console.log(senderId)
     let imageUrl;
     if( image ){
       const uploadResponse = await cloudinary.uploader.upload(image);

@@ -60,7 +60,9 @@ const sendMessages = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         const { text, image } = req.body;
         const { id: receiverId } = req.params;
+        console.log(receiverId);
         const senderId = req.user._id;
+        console.log(senderId);
         let imageUrl;
         if (image) {
             const uploadResponse = yield cloudinary_1.default.uploader.upload(image);

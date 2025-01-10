@@ -127,7 +127,7 @@ export const updateProfile: RequestHandler = async (
     );
     res
       .status(200)
-      .json({ message: "UserUpdatedSuccessfully", data: updateUser });
+      .json({updateUser});
   } catch (error) {
     console.log("Error in updating profile:", error);
     res.status(500).json({ message: "Internal Server Error" });

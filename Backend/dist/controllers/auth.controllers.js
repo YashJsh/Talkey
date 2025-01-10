@@ -130,7 +130,7 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         }, { new: true });
         res
             .status(200)
-            .json({ message: "UserUpdatedSuccessfully", data: updateUser });
+            .json({ updateUser });
     }
     catch (error) {
         console.log("Error in updating profile:", error);

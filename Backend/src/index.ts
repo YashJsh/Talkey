@@ -7,7 +7,8 @@ import dotenv from "dotenv";
 import cors from "cors"
 import { app, server } from "./lib/socket";
 
-dotenv.config();
+
+require('dotenv').config();
 
 
 app.use(bodyParser.json({ limit: '50mb' }));

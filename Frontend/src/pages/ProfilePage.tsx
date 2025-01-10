@@ -11,17 +11,17 @@ interface FileInputEvent extends React.ChangeEvent<HTMLInputElement> {
 const ProfilePage = () => {
   
   const { authUser, isUpdatingProfile, updateProfile } = authStore();
+  console.log(authUser);
   const [selectedImage, setSelectedImage ] = useState<string  | null>(null);    
   const handleImageUpload = async (e: FileInputEvent) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = async () => {
       const base64image = reader.result as string;
       setSelectedImage(base64image);
-      await updateProfile({ profilePic: base64image });
+      await updateProfile({ profilepic: base64image });
     };
   };
 
@@ -39,7 +39,7 @@ const ProfilePage = () => {
             <div className="flex flex-col items-center gap-4">
               <div className="relative">
                 <img
-                  src={selectedImage || authUser?.profilePic || "/avatar.png"}
+                  src={authUser?.profilepic || "/avatar.png"}
                   alt="profile"
                   className="size-32 rounded-full object-cover border-4"
                 />

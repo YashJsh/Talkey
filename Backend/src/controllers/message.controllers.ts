@@ -37,9 +37,7 @@ export const getMessages: RequestHandler = async (
         { senderId: userToChatId, receiverId: myId },
       ],
     });
-    res
-      .status(200)
-      .json({ message: "Messages fetched successfully", data: messages });
+    res.status(200).json(messages);
   } catch (error) {
     console.log("Error in fetching messages", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -54,9 +52,7 @@ export const sendMessages: RequestHandler = async (
   try {
     const { text, image } = req.body;
     const { id : receiverId} = req.params;
-    console.log(receiverId);
     const senderId = req.user._id;
-    console.log(senderId)
     let imageUrl;
     if( image ){
       const uploadResponse = await cloudinary.uploader.upload(image);
@@ -77,7 +73,7 @@ export const sendMessages: RequestHandler = async (
     }
 
 
-    res.status(201).json({message : "Message Received", data : newMessage});
+    res.status(201).json(newMessage);
   } catch (error) {
     console.log("Error in Sending messages", error);
     res.status(500).json({ error: "Internal Server Error" });

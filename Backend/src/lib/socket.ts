@@ -20,10 +20,8 @@ export function getReceiverSocketId(userId : string){
 const userSocketMap: { [key: string]: string } = {}; // {userId: socketId}
 
 io.on("connection", (socket: Socket) => {
-  console.log("A user connected", socket.id);
-
+  
   const userId = socket.handshake.query.userId;
-  console.log("User connected ,",userId)
   // Ensure userId is a string before using it
   if (typeof userId === 'string') {
     userSocketMap[userId] = socket.id;

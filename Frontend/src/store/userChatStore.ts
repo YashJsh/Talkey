@@ -4,26 +4,22 @@ import { axiosInstance } from "../axios/axios";
 import { authStore, User } from "./userAuthStore";
 
 interface Message {
-    id: string;
+    _id: string;
     senderId: string;
     receiverId: string;
     text?: string; // Optional since `text` or `image` might be used
     image?: string ; // URL of the uploaded image
     timestamp: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-    selectedUserId?: string;
-  }
+    createdAt?: string;
+    updatedAt?: string;
+}
   
   interface SendMessagePayload {
     text?: string; // Optional for cases where there's only an image
     image?: string; // Optional for cases where there's only text
   }
   
-interface GetMessageResponse {
-  message: string;
-  data: Message[];
-}
+
 
 interface ChatStoreState {
   messages: Message[];
@@ -61,10 +57,10 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   getMessage: async (userId: string) => {
     set({ isMessageLoading: true });
     try {
-      const response = await axiosInstance.get<GetMessageResponse>(
+      const response = await axiosInstance.get(
         `/messages/${userId}`
       );
-      set({ messages: response.data.data });
+      set({ messages: response.data as Message[]});
     } catch (error: any) {
       toast.error(error.response.data.message);
     } finally {
@@ -86,6 +82,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         messageData
       );
       set({messages : [...get().messages, response.data as Message]})
+      console.log(response);
     } catch (error: any) {
       toast.error(error.response.data.message);
     }

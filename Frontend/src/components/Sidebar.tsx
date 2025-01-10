@@ -13,7 +13,7 @@ const Sidebar = () => {
   useEffect(() => {
     getUsers();
   }, [getUsers]);
-
+  
   const filteredUser = showOnlineOnly ? users.filter(user => onlineUsers.includes(user._id)) : users;
 
   if (isUserLoading) return <SidebarSkeleton />;
@@ -47,11 +47,13 @@ const Sidebar = () => {
               }}
               className={`w-full py-3 flex items-center gap-3 hover:bg-base-300 s rounded-lg px-1 `}
             > 
+              
               <div className="relative mx-auto lg:max-0">
                 <img
-                  src={user.profilePic || "/avatar.png"}
+                  src={user.profilepic || "/avatar.png"}
                   alt={user.fullName}
                   className="size-12"
+                
                 />
                 {onlineUsers.includes(user._id) && (
                   <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
@@ -62,6 +64,7 @@ const Sidebar = () => {
                 <div className="text-xs text-zinc-400">
                   {onlineUsers.includes(user._id) ? "Online" : "Offline"}
                   </div>
+                  
               </div>
             </button>
           ))}

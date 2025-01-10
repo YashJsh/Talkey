@@ -19,7 +19,7 @@ const ChatBox = () => {
 
   useEffect(() => {
     if (messagesEndRef.current && messages) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current.scrollIntoView({ behavior: "instant" });
     }
   }, [messages]);
 
@@ -38,9 +38,9 @@ const ChatBox = () => {
       <ChatHeader />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message, index) => (
+        {messages.map((message) => (
           <div
-            key={message.id || `message-${index}`}
+            key={message._id}
             className={`chat ${message.senderId === authUser?._id ? "chat-end" : "chat-start"}`}
           > 
             <div className="chat-image avatar"> 
@@ -48,8 +48,8 @@ const ChatBox = () => {
                 <img
                   src={
                     message.senderId === authUser?._id
-                      ? authUser.profilePic || "/avatar.png"
-                      : selectedUser?.profilePic || "/avatar.png "
+                      ? authUser.profilepic || "/avatar.png"
+                      : selectedUser?.profilepic || "/avatar.png "
                   }
                   alt=""
                 />

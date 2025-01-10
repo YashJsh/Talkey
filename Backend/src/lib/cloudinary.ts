@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
-import {config} from "dotenv";
+import 'dotenv/config'; 
 
 cloudinary.config({ 
     cloud_name: process.env.CLOUDINARY_CLOUDNAME, 
@@ -7,4 +7,4 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-export default cloudinary;
+export default cloudinary;  

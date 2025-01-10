@@ -24,9 +24,7 @@ function getReceiverSocketId(userId) {
 // Define the userSocketMap with an explicit type
 const userSocketMap = {}; // {userId: socketId}
 io.on("connection", (socket) => {
-    console.log("A user connected", socket.id);
     const userId = socket.handshake.query.userId;
-    console.log("User connected ,", userId);
     // Ensure userId is a string before using it
     if (typeof userId === 'string') {
         userSocketMap[userId] = socket.id;

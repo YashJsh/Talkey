@@ -6,6 +6,8 @@
   import toast from "react-hot-toast";
   import * as z from 'zod'
 
+  const BASE_URL =  import.meta.env.MODE === "development" ? "http://localhost:3000" : "/";
+
   export interface User {
     _id: string;
     email: string;
@@ -114,7 +116,7 @@
       const { authUser, socket } = get();
       if (!authUser || socket?.connected) return;  // Prevents reconnection if socket is already connected.
       
-      const socketInstance = io("http://localhost:3000", {
+      const socketInstance = io(BASE_URL, {
         query: { userId: authUser._id }
       });
       

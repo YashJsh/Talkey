@@ -1,7 +1,7 @@
 import { authStore } from "../store/userAuthStore";
 import Navbar from "../components/Navbar";
 import { Camera, User } from "lucide-react";
-import { useState } from "react";
+
 
 interface FileInputEvent extends React.ChangeEvent<HTMLInputElement> {
     target: HTMLInputElement & { files: FileList };
@@ -10,9 +10,7 @@ interface FileInputEvent extends React.ChangeEvent<HTMLInputElement> {
 
 const ProfilePage = () => {
   
-  const { authUser, isUpdatingProfile, updateProfile } = authStore();
-  console.log(authUser);
-  const [selectedImage, setSelectedImage ] = useState<string  | null>(null);    
+  const { authUser, isUpdatingProfile, updateProfile } = authStore();  
   const handleImageUpload = async (e: FileInputEvent) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -20,7 +18,6 @@ const ProfilePage = () => {
     reader.readAsDataURL(file);
     reader.onload = async () => {
       const base64image = reader.result as string;
-      setSelectedImage(base64image);
       await updateProfile({ profilepic: base64image });
     };
   };

@@ -6,21 +6,17 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { app, server } from "./lib/socket";
 import path from "path";
-import helmet from "helmet";
+
 
 require("dotenv").config();
 
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'none'"],
-        styleSrc: ["'self'", "https://fonts.googleapis.com"],
-        fontSrc: ["https://fonts.gstatic.com"],
-      },
-    },
-  })
-);
+app.use((req, res, next) => {
+    res.setHeader(
+      "Content-Security-Policy",
+      "default-src 'none'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self';" 
+    );
+    next();
+});
 
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));

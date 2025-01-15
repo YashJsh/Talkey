@@ -3,14 +3,12 @@ import authrouter from "./routes/auth.route"
 import messagerouter from "./routes/messages.route"
 import bodyParser from "body-parser"
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
 import cors from "cors"
 import { app, server } from "./lib/socket";
 import path from "path";
 
 require('dotenv').config();
 
-const __dirname = path.resolve();
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));

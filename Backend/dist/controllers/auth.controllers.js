@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -18,8 +9,8 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const db_1 = require("../lib/db");
 const cloudinary_1 = __importDefault(require("../lib/cloudinary"));
 const tokenGenerate_1 = require("../lib/tokenGenerate");
-const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, db_1.connectDB)();
+const signUp = async (req, res) => {
+    await (0, db_1.connectDB)();
     const { fullName, email, password } = req.body;
     try {
         if (password.length < 6) {
@@ -28,13 +19,13 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 .json({ message: "Password must be at least 6 characters long" });
             return;
         }
-        const user = yield user_modals_1.default.findOne({ email });
+        const user = await user_modals_1.default.findOne({ email });
         if (user) {
             res.status(400).json({ success: false, message: "Email already exists" });
             return;
         }
-        const hashPassword = yield bcryptjs_1.default.hash(password, 10);
-        const newUser = yield user_modals_1.default.create({
+        const hashPassword = await bcryptjs_1.default.hash(password, 10);
+        const newUser = await user_modals_1.default.create({
             fullName,
             email,
             password: hashPassword,
@@ -45,7 +36,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const userId = newUser._id;
         (0, tokenGenerate_1.generateToken)(userId.toString(), res);
-        yield newUser.save();
+        await newUser.save();
         // res.status(201).json({
         //   success: true,
         //   message: "User created successfully",
@@ -63,24 +54,24 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).json({ message: "Internal Server Error" });
         return;
     }
-});
+};
 exports.signUp = signUp;
-const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, db_1.connectDB)();
+const signIn = async (req, res) => {
+    await (0, db_1.connectDB)();
     const { email, password } = req.body;
     if (!email || !password) {
         res.status(400).json({ message: "Email and Password are required" });
         return;
     }
     try {
-        const user = yield user_modals_1.default.findOne({
+        const user = await user_modals_1.default.findOne({
             email: email,
         });
         if (!user) {
             res.status(400).json({ message: "Invalid Credentials" });
             return;
         }
-        const isPasswordValid = yield bcryptjs_1.default.compare(password, user.password);
+        const isPasswordValid = await bcryptjs_1.default.compare(password, user.password);
         if (!isPasswordValid) {
             res.status(400).json({ message: "Invalid Credentials" });
             return;
@@ -102,7 +93,7 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         res.status(500).json({ message: "Internal Server Error" });
     }
-});
+};
 exports.signIn = signIn;
 const signOut = (req, res) => {
     try {
@@ -115,8 +106,8 @@ const signOut = (req, res) => {
     }
 };
 exports.signOut = signOut;
-const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, db_1.connectDB)();
+const updateProfile = async (req, res) => {
+    await (0, db_1.connectDB)();
     try {
         const { profilePic } = req.body;
         const userId = req.user.id;
@@ -124,8 +115,8 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.status(400).json({ message: "Profile not found" });
             return;
         }
-        const uploadResponse = yield cloudinary_1.default.uploader.upload(profilePic);
-        const updateUser = yield user_modals_1.default.findByIdAndUpdate(userId, {
+        const uploadResponse = await cloudinary_1.default.uploader.upload(profilePic);
+        const updateUser = await user_modals_1.default.findByIdAndUpdate(userId, {
             profilepic: uploadResponse.secure_url,
         }, { new: true });
         res
@@ -136,7 +127,7 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         console.log("Error in updating profile:", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
-});
+};
 exports.updateProfile = updateProfile;
 const checkAuth = (req, res) => {
     try {

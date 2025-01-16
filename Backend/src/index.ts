@@ -7,16 +7,8 @@ import cors from "cors";
 import { app, server } from "./lib/socket";
 import path from "path";
 
-
 require("dotenv").config();
 
-app.use((req, res, next) => {
-    res.setHeader(
-      "Content-Security-Policy",
-      "default-src 'none'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self';" 
-    );
-    next();
-});
 
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
@@ -30,8 +22,10 @@ app.use(
   })
 );
 
+
 app.use("/api/auth", authrouter);
 app.use("/api/messages", messagerouter);
+
 
 if (process.env.NODE_ENV !== "production") {
   app.use(express.static(path.join(__dirname, "../Frontend/dist")));
@@ -40,6 +34,6 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-server.listen(3000, () => {
-  console.log("Server is running on port 3000");
+server.listen(5001, () => {
+  console.log("Server is running on port 5001");
 });

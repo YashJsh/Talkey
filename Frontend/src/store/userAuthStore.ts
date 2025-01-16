@@ -6,7 +6,7 @@
   import toast from "react-hot-toast";
   import * as z from 'zod'
 
-  const BASE_URL =  import.meta.env.MODE === "development" ? "http://localhost:3000" : "/";
+  const BASE_URL =  import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
 
   export interface User {
     _id: string;

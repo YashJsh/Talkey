@@ -5,7 +5,6 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { app, server } from "./lib/socket";
-import path from "path";
 
 require("dotenv").config();
 

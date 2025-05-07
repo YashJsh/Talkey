@@ -22,17 +22,9 @@ app.use(
   })
 );
 
-
 app.use("/api/auth", authrouter);
 app.use("/api/messages", messagerouter);
 
-
-if (process.env.NODE_ENV !== "production") {
-  app.use(express.static(path.join(__dirname, "../Frontend/dist")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../Frontend", "dist", "index.html"));
-  });
-}
 
 server.listen(5001, () => {
   console.log("Server is running on port 5001");

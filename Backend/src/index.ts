@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "https://talkey-lilac.vercel.app",
+    origin: "https://talkey-kappa.vercel.app",
     credentials: true,
   })
 );

@@ -7,7 +7,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["ws://talkey-lilac.vercel.app"],
+    origin: ["ws://talkey-kappa.vercel.app"],
   },
 });
 
